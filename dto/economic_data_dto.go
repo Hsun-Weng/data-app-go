@@ -1,6 +1,6 @@
 package dto
 
 type EconomicDataDTO struct {
-	Date  string `bson:"date"`
-	Value int    `bson:"value"`
+	Date  string `json:"date"`
+	Value int    `json:"value"`
 }
