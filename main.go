@@ -1,8 +1,7 @@
 package main
 
 import (
-	config2 "data-app-go/config"
-	"data-app-go/router"
+	"data-app-go/config"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -11,11 +10,17 @@ import (
 
 func main() {
 	gin.SetMode("debug")
-	router := router.SetupRouter()
-	config := config2.ReadConfig()
-	log.Println(config)
 
-	endPoint := fmt.Sprintf(":%d", 8080)
+	appConfig := config.ReadConfig()
+	db, err := config.NewMongoDatabase(appConfig)
+	if err != nil {
+		log.Fatalf("Database Connection Failed: %s", err)
+		panic(err)
+	}
+	router := SetupRouter(db)
+
+	endPoint := fmt.Sprintf(":%s", appConfig.Server.Port)
+
 	server := &http.Server{
 		Addr:  endPoint,
 		Handler: router,

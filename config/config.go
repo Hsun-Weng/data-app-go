@@ -12,7 +12,6 @@ type Config struct {
 	}
 	Mongodb struct{
 		Host string `yaml:"host"`
-		Port string `yaml:"port"`
 		Database string `yaml:"database"`
 		UserName string `yaml:"username"`
 		Password string `yaml:"password"`

@@ -8,13 +8,16 @@ import (
 )
 
 type EconomicDataController struct {
-	service *service.EconomicDataService
+	service service.EconomicDataService
 }
 
-func NewEconomicDataController(service *service.EconomicDataService) EconomicDataController {
+func NewEconomicDataController(service service.EconomicDataService) EconomicDataController {
 	return EconomicDataController{service: service}
 }
 
-func Test(context *gin.Context) {
-	context.JSON(http.StatusOK, gin.H{})
+func (controller *EconomicDataController) GetValues(context *gin.Context) {
+	countryCode := context.Param("countryCode")
+	dataCode := context.Param("dataCode")
+
+	context.JSON(http.StatusOK, controller.service.GetValues(countryCode, dataCode))
 }
