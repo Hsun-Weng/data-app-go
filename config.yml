@@ -1,9 +1,0 @@
-server:
-  port: 8079
-mongodb:
-  host: localhost
-  port: 27017
-  database:
-  username:
-  password:
-  authentication-database: admin
