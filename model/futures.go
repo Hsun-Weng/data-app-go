@@ -1,10 +1,13 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type Futures struct {
 	ID              primitive.ObjectID `bson:"_id"`
-	Date            primitive.DateTime `bson:"date"`
+	Date            time.Time `bson:"date"`
 	FuturesCode     string             `bson:"futures_code"`
 	ContractDate    string             `bson:"contract_date"`
 	Open            float32            `bson:"open"`

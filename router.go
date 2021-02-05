@@ -10,8 +10,13 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	economicDataRouter := InitEconomicDataController(db)
-	router.GET("/economic/:countryCode/:dataCode", economicDataRouter.GetValues)
+	economicDataController := InitEconomicDataController(db)
+	futuresChipController := InitFuturesChipController(db)
+	stockChipController := InitStockChipController(db)
+
+	router.GET("/economic/:countryCode/:dataCode", economicDataController.GetValues)
+	router.GET("/futures/:futuresCode/chip", futuresChipController.GetFuturesChips)
+	router.GET("/stock/:stockCode/chip", stockChipController.GetStockChips)
 
 	return router
 }

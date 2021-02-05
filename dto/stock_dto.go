@@ -10,5 +10,12 @@ type StockDTO struct {
 	Close         float32 `json:"close"`
 	Volume        int     `json:"volume"`
 	Change        int     `json:"change"`
-	ChangePercent float32 `json:"changePercent"`
+	ChangePercent float64 `json:"changePercent"`
+}
+
+type StockPageDTO struct {
+	TotalPage int64 `json:"totalPage"`
+	Page int `json:"page"`
+	Size int64 `json:"size"`
+	Content []StockDTO `json:"content"`
 }
