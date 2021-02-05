@@ -9,5 +9,5 @@ type StockIndexDTO struct {
 	Close         float32 `json:"close"`
 	Volume        int     `json:"volume"`
 	Change        int     `json:"change"`
-	ChangePercent float32 `json:"changePercent"`
+	ChangePercent float64 `json:"changePercent"`
 }

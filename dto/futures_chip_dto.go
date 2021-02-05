@@ -11,5 +11,5 @@ type InvestorFuturesChipDTO struct {
 	OpenInterestLongLot  int    `json:"openInterestLongLot"`
 	OpenInterestShortLot int    `json:"openInterestShortLot"`
 	OpenInterestNetLot   int    `json:"openInterestNetLot"`
-	Percent              int    `json:"percent"`
+	Percent              float64    `json:"percent"`
 }

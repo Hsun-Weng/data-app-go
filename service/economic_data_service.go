@@ -4,6 +4,7 @@ import (
 	"data-app-go/dto"
 	"data-app-go/model"
 	"data-app-go/repository"
+	"fmt"
 )
 
 type EconomicDataService struct {
@@ -15,12 +16,12 @@ func NewEconomicDataService(repository repository.EconomicDataRepository) Econom
 }
 
 func (service *EconomicDataService) GetValues(countryCode string, dataCode string) []dto.EconomicDataDTO {
-	return ToEconomicDataDTOs(service.repository.FindByCountryCodeAndDataCode(countryCode, dataCode))
+	return ToEconomicDataDTOs(service.repository.FindEconomicValuesByCountryCodeAndDataCode(countryCode, dataCode))
 }
 
 func ToEconomicDataDTO(economicData model.EconomicData) dto.EconomicDataDTO {
 	return dto.EconomicDataDTO{
-		Date:  economicData.Date.Time().Format("2021-01-01"),
+		Date:  fmt.Sprintf("%d-%02d-%02d", economicData.Date.Year(), economicData.Date.Month(), economicData.Date.Day()),
 		Value: economicData.Value,
 	}
 }

@@ -1,10 +1,13 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type Stock struct {
 	ID            primitive.ObjectID `bson:"_id"`
-	Date          primitive.DateTime `bson:"date"`
+	Date          time.Time `bson:"date"`
 	StockCode     string             `bson:"stock_code"`
 	Open          float32            `bson:"open"`
 	Low           float32            `bson:"low"`
@@ -12,5 +15,5 @@ type Stock struct {
 	Close         float32            `bson:"close"`
 	Volume        int                `bson:"volume"`
 	Change        int                `bson:"change"`
-	ChangePercent float32            `bson:"change_percent"`
+	ChangePercent float64            `bson:"change_percent"`
 }

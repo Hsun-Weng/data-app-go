@@ -1,10 +1,13 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type StockChip struct {
 	ID            primitive.ObjectID  `bson:"_id"`
-	Date          primitive.DateTime  `bson:"date"`
+	Date          time.Time  `bson:"date"`
 	StockCode     string              `bson:"stock_code"`
 	NetShare      int                 `bson:"net_share"`
 	InvestorChips []InvestorStockChip `bson:"investor_chip"`
