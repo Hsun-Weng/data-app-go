@@ -21,10 +21,10 @@ func NewFuturesChipService(repository repository.FuturesChipRepository) FuturesC
 func (service *FuturesChipService) GetFuturesChips(futuresCode string, startDateStr string, endDateStr string) []dto.FuturesChipDTO {
 	startDate, startDateParseErr := time.Parse(time.RFC3339, fmt.Sprintf("%sT00:00:00Z", startDateStr))
 	endDate, endDateParseErr := time.Parse(time.RFC3339, fmt.Sprintf("%sT23:59:59Z", endDateStr))
-	if startDateParseErr != nil{
+	if startDateParseErr != nil {
 		log.Fatal(startDateParseErr)
 	}
-	if endDateParseErr != nil{
+	if endDateParseErr != nil {
 		log.Fatal(endDateParseErr)
 	}
 	return ToFuturesChipDTOs(service.repository.FindFuturesChipsByFuturesCodeAndDateBetween(futuresCode, startDate, endDate))
@@ -32,8 +32,8 @@ func (service *FuturesChipService) GetFuturesChips(futuresCode string, startDate
 
 func ToFuturesChipDTO(futuresChip model.FuturesChip) dto.FuturesChipDTO {
 	return dto.FuturesChipDTO{
-		Date:  fmt.Sprintf("%d-%02d-%02d", futuresChip.Date.Year(), futuresChip.Date.Month(), futuresChip.Date.Day()),
-		FuturesCode: futuresChip.FuturesCode,
+		Date:             fmt.Sprintf("%d-%02d-%02d", futuresChip.Date.Year(), futuresChip.Date.Month(), futuresChip.Date.Day()),
+		FuturesCode:      futuresChip.FuturesCode,
 		InvestorChipDTOs: ToInvestorFuturesChipDTOs(futuresChip.InvestorChips),
 	}
 }
@@ -49,11 +49,11 @@ func ToFuturesChipDTOs(futuresChipArray []model.FuturesChip) []dto.FuturesChipDT
 
 func ToInvestorFuturesChipDTO(investorFuturesChip model.InvestorFuturesChip) dto.InvestorFuturesChipDTO {
 	return dto.InvestorFuturesChipDTO{
-		InvestorCode: investorFuturesChip.InvestorCode,
-		OpenInterestLongLot: investorFuturesChip.OpenInterestLongLot,
+		InvestorCode:         investorFuturesChip.InvestorCode,
+		OpenInterestLongLot:  investorFuturesChip.OpenInterestLongLot,
 		OpenInterestShortLot: investorFuturesChip.OpenInterestShortLot,
-		OpenInterestNetLot: investorFuturesChip.OpenInterestLongLot - investorFuturesChip.OpenInterestShortLot,
-		Percent: math.Trunc(investorFuturesChip.Percent*100*1e2 + 0.5)*1e-2,
+		OpenInterestNetLot:   investorFuturesChip.OpenInterestLongLot - investorFuturesChip.OpenInterestShortLot,
+		Percent:              math.Trunc(investorFuturesChip.Percent*100*1e2+0.5) * 1e-2,
 	}
 }
 

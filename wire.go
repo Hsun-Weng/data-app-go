@@ -7,6 +7,7 @@ import (
 	"data-app-go/controller"
 	"data-app-go/repository"
 	"data-app-go/service"
+
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/google/wire"
@@ -27,7 +28,22 @@ func InitStockChipController(db *mongo.Database) controller.StockChipController 
 	return controller.StockChipController{}
 }
 
+func InitStockMarginController(db *mongo.Database) controller.StockMarginController {
+	wire.Build(repository.NewStockMarginRepository, service.NewStockMarginService, controller.NewStockMarginController)
+	return controller.StockMarginController{}
+}
+
+func InitStockController(db *mongo.Database) controller.StockController {
+	wire.Build(repository.NewStockRepository, service.NewStockService, controller.NewStockController)
+	return controller.StockController{}
+}
+
 func InitStockIndexController(db *mongo.Database) controller.StockIndexController {
 	wire.Build(repository.NewStockIndexRepository, service.NewStockIndexService, controller.NewStockIndexController)
 	return controller.StockIndexController{}
+}
+
+func InitFuturesController(db *mongo.Database) controller.FuturesController {
+	wire.Build(repository.NewFuturesRepository, service.NewFuturesService, controller.NewFuturesController)
+	return controller.FuturesController{}
 }
