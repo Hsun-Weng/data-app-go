@@ -1,7 +1,8 @@
 config.yml
 ```yaml
+profile: release
 server:
-  port: 8079
+  port: 8080
 mongodb:
   host: {host}:{port}
   database: {database}
