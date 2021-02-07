@@ -1,12 +1,13 @@
 package repository
 
 import (
+	"context"
 	"data-app-go/model"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"time"
-	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type FuturesChipRepository struct {
@@ -17,7 +18,7 @@ func NewFuturesChipRepository(database *mongo.Database) FuturesChipRepository {
 	return FuturesChipRepository{collection: database.Collection("futures_chip")}
 }
 
-func (repository *FuturesChipRepository) FindFuturesChipsByFuturesCodeAndDateBetween(futuresCode string, startDate time.Time, endDate time.Time) []model.FuturesChip {
+func (repository *FuturesChipRepository) FindFuturesChipsByFuturesCodeAndDateBetween(futuresCode string, startDate time.Time, endDate time.Time) []*model.FuturesChip {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -28,7 +29,7 @@ func (repository *FuturesChipRepository) FindFuturesChipsByFuturesCodeAndDateBet
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.FuturesChip
+	var results []*model.FuturesChip
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -39,7 +40,7 @@ func (repository *FuturesChipRepository) FindFuturesChipsByFuturesCodeAndDateBet
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)

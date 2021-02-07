@@ -29,7 +29,7 @@ func (service *FuturesService) GetFuturesPrices(futuresCode string, contractDate
 	return ToFuturesDTOs(service.repository.FindFuturesByFuturesCodeAndContractDateAndDateBetween(futuresCode, contractDate, startDate, endDate))
 }
 
-func ToFuturesDTO(futures model.Futures) dto.FuturesDTO {
+func ToFuturesDTO(futures *model.Futures) dto.FuturesDTO {
 	return dto.FuturesDTO{
 		Date:         fmt.Sprintf("%d-%02d-%02d", futures.Date.Year(), futures.Date.Month(), futures.Date.Day()),
 		FuturesCode:  futures.FuturesCode,
@@ -42,7 +42,7 @@ func ToFuturesDTO(futures model.Futures) dto.FuturesDTO {
 	}
 }
 
-func ToFuturesDTOs(futuresArray []model.Futures) []dto.FuturesDTO {
+func ToFuturesDTOs(futuresArray []*model.Futures) []dto.FuturesDTO {
 	futuresDTOs := make([]dto.FuturesDTO, len(futuresArray))
 	for i, item := range futuresArray {
 		futuresDTOs[i] = ToFuturesDTO(item)

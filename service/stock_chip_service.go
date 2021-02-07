@@ -20,24 +20,24 @@ func NewStockChipService(repository repository.StockChipRepository) StockChipSer
 func (service *StockChipService) GetStockChips(stockCode string, startDateStr string, endDateStr string) []dto.StockChipDTO {
 	startDate, startDateParseErr := time.Parse(time.RFC3339, fmt.Sprintf("%sT00:00:00Z", startDateStr))
 	endDate, endDateParseErr := time.Parse(time.RFC3339, fmt.Sprintf("%sT23:59:59Z", endDateStr))
-	if startDateParseErr != nil{
+	if startDateParseErr != nil {
 		log.Fatal(startDateParseErr)
 	}
-	if endDateParseErr != nil{
+	if endDateParseErr != nil {
 		log.Fatal(endDateParseErr)
 	}
 	return ToStockChipDTOs(service.repository.FindStockChipsByStockCodeAndDateBetween(stockCode, startDate, endDate))
 }
 
-func ToStockChipDTO(stockChip model.StockChip) dto.StockChipDTO {
+func ToStockChipDTO(stockChip *model.StockChip) dto.StockChipDTO {
 	return dto.StockChipDTO{
-		Date:  fmt.Sprintf("%d-%02d-%02d", stockChip.Date.Year(), stockChip.Date.Month(), stockChip.Date.Day()),
-		StockCode: stockChip.StockCode,
+		Date:             fmt.Sprintf("%d-%02d-%02d", stockChip.Date.Year(), stockChip.Date.Month(), stockChip.Date.Day()),
+		StockCode:        stockChip.StockCode,
 		InvestorChipDTOs: ToInvestorStockChipDTOs(stockChip.InvestorChips),
 	}
 }
 
-func ToStockChipDTOs(stockChipArray []model.StockChip) []dto.StockChipDTO {
+func ToStockChipDTOs(stockChipArray []*model.StockChip) []dto.StockChipDTO {
 	stockChipDTOs := make([]dto.StockChipDTO, len(stockChipArray))
 	for i, item := range stockChipArray {
 		stockChipDTOs[i] = ToStockChipDTO(item)
@@ -49,8 +49,8 @@ func ToStockChipDTOs(stockChipArray []model.StockChip) []dto.StockChipDTO {
 func ToInvestorStockChipDTO(investorStockChip model.InvestorStockChip) dto.InvestorStockChipDTO {
 	return dto.InvestorStockChipDTO{
 		InvestorCode: investorStockChip.InvestorCode,
-		LongShare: investorStockChip.LongShare,
-		ShortShare: investorStockChip.ShortShare,
+		LongShare:    investorStockChip.LongShare,
+		ShortShare:   investorStockChip.ShortShare,
 	}
 }
 

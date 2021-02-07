@@ -18,7 +18,7 @@ func NewEconomicDataRepository(database *mongo.Database) EconomicDataRepository 
 	return EconomicDataRepository{collection: database.Collection("economic_data")}
 }
 
-func (repository *EconomicDataRepository) FindEconomicValuesByCountryCodeAndDataCode(countryCode string, dataCode string) []model.EconomicData {
+func (repository *EconomicDataRepository) FindEconomicValuesByCountryCodeAndDataCode(countryCode string, dataCode string) []*model.EconomicData {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -26,7 +26,7 @@ func (repository *EconomicDataRepository) FindEconomicValuesByCountryCodeAndData
 		{"data_code", dataCode},
 	})
 	defer cursor.Close(ctx)
-	var results []model.EconomicData
+	var results []*model.EconomicData
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -37,7 +37,7 @@ func (repository *EconomicDataRepository) FindEconomicValuesByCountryCodeAndData
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)

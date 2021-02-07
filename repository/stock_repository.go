@@ -1,13 +1,14 @@
 package repository
 
 import (
+	"context"
 	"data-app-go/model"
+	"log"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"time"
-	"context"
 )
 
 type StockRepository struct {
@@ -18,7 +19,7 @@ func NewStockRepository(database *mongo.Database) StockRepository {
 	return StockRepository{collection: database.Collection("stock")}
 }
 
-func (repository *StockRepository) FindStocksByStockCodeAndDateBetween(stockCode string, startDate time.Time, endDate time.Time) []model.Stock {
+func (repository *StockRepository) FindStocksByStockCodeAndDateBetween(stockCode string, startDate time.Time, endDate time.Time) []*model.Stock {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -29,7 +30,7 @@ func (repository *StockRepository) FindStocksByStockCodeAndDateBetween(stockCode
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.Stock
+	var results []*model.Stock
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -40,14 +41,14 @@ func (repository *StockRepository) FindStocksByStockCodeAndDateBetween(stockCode
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)
 	return results
 }
 
-func (repository *StockRepository) FindStockLatestByStockCode(stockCode string) model.Stock {
+func (repository *StockRepository) FindStockLatestByStockCode(stockCode string) *model.Stock {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	options := options.FindOne().SetSort(bson.D{{"date", -1}})
@@ -57,12 +58,12 @@ func (repository *StockRepository) FindStockLatestByStockCode(stockCode string) 
 	}, options).Decode(&result)
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
-		return model.Stock{}
+		return nil
 	}
-	return result
+	return &result
 }
 
-func (repository *StockRepository) FindStockLatest() (model.Stock, error) {
+func (repository *StockRepository) FindStockLatest() (*model.Stock, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	options := options.FindOne().SetSort(bson.D{{"date", -1}})
@@ -70,13 +71,12 @@ func (repository *StockRepository) FindStockLatest() (model.Stock, error) {
 	err := repository.collection.FindOne(ctx, bson.D{}, options).Decode(&result)
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
-		return model.Stock{}, err
+		return nil, err
 	}
-	return result, nil
+	return &result, nil
 }
 
-
-func (repository *StockRepository) FindStocksByStockCodesAndDateBetween(stockCodes []string, startDate time.Time, endDate time.Time) []model.Stock {
+func (repository *StockRepository) FindStocksByStockCodesAndDateBetween(stockCodes []string, startDate time.Time, endDate time.Time) []*model.Stock {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -89,7 +89,7 @@ func (repository *StockRepository) FindStocksByStockCodesAndDateBetween(stockCod
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.Stock
+	var results []*model.Stock
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -100,7 +100,7 @@ func (repository *StockRepository) FindStocksByStockCodesAndDateBetween(stockCod
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)
@@ -123,7 +123,7 @@ func (repository *StockRepository) CountStocksByDateBetween(startDate time.Time,
 	return count
 }
 
-func (repository *StockRepository) FindStocksByDateBetweenAndSortByAndLimit(startDate time.Time, endDate time.Time, sortColumn string, direction int, limit int64) []model.Stock {
+func (repository *StockRepository) FindStocksByDateBetweenAndSortByAndLimit(startDate time.Time, endDate time.Time, sortColumn string, direction int, limit int64) []*model.Stock {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	options := options.Find().SetSort(bson.D{{sortColumn, direction}}).SetLimit(limit)
@@ -134,7 +134,7 @@ func (repository *StockRepository) FindStocksByDateBetweenAndSortByAndLimit(star
 		}},
 	}, options)
 	defer cursor.Close(ctx)
-	var results []model.Stock
+	var results []*model.Stock
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -145,10 +145,9 @@ func (repository *StockRepository) FindStocksByDateBetweenAndSortByAndLimit(star
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)
 	return results
 }
-

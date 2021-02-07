@@ -1,13 +1,14 @@
 package repository
 
 import (
+	"context"
 	"data-app-go/model"
+	"log"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"time"
-	"context"
 )
 
 type StockIndexRepository struct {
@@ -18,7 +19,7 @@ func NewStockIndexRepository(database *mongo.Database) StockIndexRepository {
 	return StockIndexRepository{collection: database.Collection("stock_index")}
 }
 
-func (repository *StockIndexRepository) FindStockIndexesByIndexCodeAndDateBetween(indexCode string, startDate time.Time, endDate time.Time) []model.StockIndex {
+func (repository *StockIndexRepository) FindStockIndexesByIndexCodeAndDateBetween(indexCode string, startDate time.Time, endDate time.Time) []*model.StockIndex {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -29,7 +30,7 @@ func (repository *StockIndexRepository) FindStockIndexesByIndexCodeAndDateBetwee
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.StockIndex
+	var results []*model.StockIndex
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -40,14 +41,14 @@ func (repository *StockIndexRepository) FindStockIndexesByIndexCodeAndDateBetwee
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)
 	return results
 }
 
-func (repository *StockIndexRepository) FindStockIndexLatestByIndexCode(indexCode string) model.StockIndex {
+func (repository *StockIndexRepository) FindStockIndexLatestByIndexCode(indexCode string) *model.StockIndex {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	options := options.FindOne().SetSort(bson.D{{"date", -1}})
@@ -57,9 +58,9 @@ func (repository *StockIndexRepository) FindStockIndexLatestByIndexCode(indexCod
 	}, options).Decode(&result)
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
-		return model.StockIndex{}
+		return nil
 	}
-	return result
+	return &result
 }
 
 func (repository *StockIndexRepository) FindStockIndexLatest() (model.StockIndex, error) {
@@ -75,8 +76,7 @@ func (repository *StockIndexRepository) FindStockIndexLatest() (model.StockIndex
 	return result, nil
 }
 
-
-func (repository *StockIndexRepository) FindStockIndexesByIndexCodesAndDateBetween(indexCodes []string, startDate time.Time, endDate time.Time) []model.StockIndex {
+func (repository *StockIndexRepository) FindStockIndexesByIndexCodesAndDateBetween(indexCodes []string, startDate time.Time, endDate time.Time) []*model.StockIndex {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -89,7 +89,7 @@ func (repository *StockIndexRepository) FindStockIndexesByIndexCodesAndDateBetwe
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.StockIndex
+	var results []*model.StockIndex
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -100,10 +100,9 @@ func (repository *StockIndexRepository) FindStockIndexesByIndexCodesAndDateBetwe
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)
 	return results
 }
-

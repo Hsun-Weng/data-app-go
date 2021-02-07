@@ -1,12 +1,13 @@
 package repository
 
 import (
+	"context"
 	"data-app-go/model"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"time"
-	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type StockMarginRepository struct {
@@ -17,7 +18,7 @@ func NewStockMarginRepository(database *mongo.Database) StockMarginRepository {
 	return StockMarginRepository{collection: database.Collection("stock_margin")}
 }
 
-func (repository *StockMarginRepository) FindStockMarginsByStockCodeAndDateBetween(stockCode string, startDate time.Time, endDate time.Time) []model.StockMargin {
+func (repository *StockMarginRepository) FindStockMarginsByStockCodeAndDateBetween(stockCode string, startDate time.Time, endDate time.Time) []*model.StockMargin {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -28,7 +29,7 @@ func (repository *StockMarginRepository) FindStockMarginsByStockCodeAndDateBetwe
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.StockMargin
+	var results []*model.StockMargin
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -39,7 +40,7 @@ func (repository *StockMarginRepository) FindStockMarginsByStockCodeAndDateBetwe
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)

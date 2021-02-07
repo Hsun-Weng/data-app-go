@@ -30,7 +30,7 @@ func (service *FuturesChipService) GetFuturesChips(futuresCode string, startDate
 	return ToFuturesChipDTOs(service.repository.FindFuturesChipsByFuturesCodeAndDateBetween(futuresCode, startDate, endDate))
 }
 
-func ToFuturesChipDTO(futuresChip model.FuturesChip) dto.FuturesChipDTO {
+func ToFuturesChipDTO(futuresChip *model.FuturesChip) dto.FuturesChipDTO {
 	return dto.FuturesChipDTO{
 		Date:             fmt.Sprintf("%d-%02d-%02d", futuresChip.Date.Year(), futuresChip.Date.Month(), futuresChip.Date.Day()),
 		FuturesCode:      futuresChip.FuturesCode,
@@ -38,7 +38,7 @@ func ToFuturesChipDTO(futuresChip model.FuturesChip) dto.FuturesChipDTO {
 	}
 }
 
-func ToFuturesChipDTOs(futuresChipArray []model.FuturesChip) []dto.FuturesChipDTO {
+func ToFuturesChipDTOs(futuresChipArray []*model.FuturesChip) []dto.FuturesChipDTO {
 	futuresChipDTOs := make([]dto.FuturesChipDTO, len(futuresChipArray))
 	for i, item := range futuresChipArray {
 		futuresChipDTOs[i] = ToFuturesChipDTO(item)

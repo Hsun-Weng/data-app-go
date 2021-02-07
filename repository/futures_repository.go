@@ -18,7 +18,7 @@ func NewFuturesRepository(database *mongo.Database) FuturesRepository {
 	return FuturesRepository{collection: database.Collection("futures")}
 }
 
-func (repository *FuturesRepository) FindFuturesByFuturesCodeAndDateBetween(futuresCode string, startDate time.Time, endDate time.Time) []model.Futures {
+func (repository *FuturesRepository) FindFuturesByFuturesCodeAndDateBetween(futuresCode string, startDate time.Time, endDate time.Time) []*model.Futures {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -29,7 +29,7 @@ func (repository *FuturesRepository) FindFuturesByFuturesCodeAndDateBetween(futu
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.Futures
+	var results []*model.Futures
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -40,14 +40,14 @@ func (repository *FuturesRepository) FindFuturesByFuturesCodeAndDateBetween(futu
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)
 	return results
 }
 
-func (repository *FuturesRepository) FindFuturesByFuturesCodeAndContractDateAndDateBetween(futuresCode string, contractDate string, startDate time.Time, endDate time.Time) []model.Futures {
+func (repository *FuturesRepository) FindFuturesByFuturesCodeAndContractDateAndDateBetween(futuresCode string, contractDate string, startDate time.Time, endDate time.Time) []*model.Futures {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -59,7 +59,7 @@ func (repository *FuturesRepository) FindFuturesByFuturesCodeAndContractDateAndD
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.Futures
+	var results []*model.Futures
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -70,7 +70,7 @@ func (repository *FuturesRepository) FindFuturesByFuturesCodeAndContractDateAndD
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)

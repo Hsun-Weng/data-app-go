@@ -1,12 +1,13 @@
 package repository
 
 import (
+	"context"
 	"data-app-go/model"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"time"
-	"context"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type StockChipRepository struct {
@@ -17,7 +18,7 @@ func NewStockChipRepository(database *mongo.Database) StockChipRepository {
 	return StockChipRepository{collection: database.Collection("stock_chip")}
 }
 
-func (repository *StockChipRepository) FindStockChipsByStockCodeAndDateBetween(stockCode string, startDate time.Time, endDate time.Time) []model.StockChip {
+func (repository *StockChipRepository) FindStockChipsByStockCodeAndDateBetween(stockCode string, startDate time.Time, endDate time.Time) []*model.StockChip {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
@@ -28,7 +29,7 @@ func (repository *StockChipRepository) FindStockChipsByStockCodeAndDateBetween(s
 		}},
 	})
 	defer cursor.Close(ctx)
-	var results []model.StockChip
+	var results []*model.StockChip
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
@@ -39,7 +40,7 @@ func (repository *StockChipRepository) FindStockChipsByStockCodeAndDateBetween(s
 		if err != nil {
 			log.Fatal(err)
 		}
-		results = append(results, result)
+		results = append(results, &result)
 	}
 
 	cursor.Close(ctx)
