@@ -10,29 +10,32 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type EconomicDataRepository struct {
+type StockChipRepository struct {
 	collection *mongo.Collection
 }
 
-func NewEconomicDataRepository(database *mongo.Database) EconomicDataRepository {
-	return EconomicDataRepository{collection: database.Collection("economic_data")}
+func NewStockChipRepository(database *mongo.Database) StockChipRepository {
+	return StockChipRepository{collection: database.Collection("stock_chip")}
 }
 
-func (repository *EconomicDataRepository) FindEconomicValuesByCountryCodeAndDataCode(countryCode string, dataCode string) []*model.EconomicData {
+func (repository *StockChipRepository) FindStockChipsByStockCodeAndDateBetween(stockCode string, startDate time.Time, endDate time.Time) []*model.StockChip {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
-		{"country_code", countryCode},
-		{"data_code", dataCode},
+		{"stock_code", stockCode},
+		{"date", bson.D{
+			{"$gte", startDate},
+			{"$lte", endDate},
+		}},
 	})
 	defer cursor.Close(ctx)
-	var results []*model.EconomicData
+	var results []*model.StockChip
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
 	}
 	for cursor.Next(ctx) {
-		var result model.EconomicData
+		var result model.StockChip
 		err := cursor.Decode(&result)
 		if err != nil {
 			log.Fatal(err)

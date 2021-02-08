@@ -1,27 +1,29 @@
 package config
 
 import (
-	yaml "gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Server struct{
+	Profile string `yaml:"profile"`
+	Server  struct {
 		Port string `yaml:"port"`
 	}
-	Mongodb struct{
-		Host string `yaml:"host"`
-		Database string `yaml:"database"`
-		UserName string `yaml:"username"`
-		Password string `yaml:"password"`
+	Mongodb struct {
+		Host                   string `yaml:"host"`
+		Database               string `yaml:"database"`
+		UserName               string `yaml:"username"`
+		Password               string `yaml:"password"`
 		AuthenticationDatabase string `yaml:"authentication-database"`
 	}
 }
 
-func ReadConfig() *Config {
+func ReadConfig(configPath string) *Config {
 	config := new(Config)
-	configFile, err := ioutil.ReadFile("config.yml")
+	configFile, err := ioutil.ReadFile(configPath)
 
 	log.Println("configFile:", configFile)
 

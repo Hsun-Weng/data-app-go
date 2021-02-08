@@ -10,29 +10,32 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type EconomicDataRepository struct {
+type FuturesChipRepository struct {
 	collection *mongo.Collection
 }
 
-func NewEconomicDataRepository(database *mongo.Database) EconomicDataRepository {
-	return EconomicDataRepository{collection: database.Collection("economic_data")}
+func NewFuturesChipRepository(database *mongo.Database) FuturesChipRepository {
+	return FuturesChipRepository{collection: database.Collection("futures_chip")}
 }
 
-func (repository *EconomicDataRepository) FindEconomicValuesByCountryCodeAndDataCode(countryCode string, dataCode string) []*model.EconomicData {
+func (repository *FuturesChipRepository) FindFuturesChipsByFuturesCodeAndDateBetween(futuresCode string, startDate time.Time, endDate time.Time) []*model.FuturesChip {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	cursor, err := repository.collection.Find(ctx, bson.D{
-		{"country_code", countryCode},
-		{"data_code", dataCode},
+		{"futures_code", futuresCode},
+		{"date", bson.D{
+			{"$gte", startDate},
+			{"$lte", endDate},
+		}},
 	})
 	defer cursor.Close(ctx)
-	var results []*model.EconomicData
+	var results []*model.FuturesChip
 	if err != nil {
 		log.Fatalf("Find Data err #%v", err)
 		return nil
 	}
 	for cursor.Next(ctx) {
-		var result model.EconomicData
+		var result model.FuturesChip
 		err := cursor.Decode(&result)
 		if err != nil {
 			log.Fatal(err)

@@ -2,16 +2,29 @@ package main
 
 import (
 	"data-app-go/config"
+	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	gin.SetMode("debug")
+var configPath = flag.String("config", "config.yml", "config file")
 
-	appConfig := config.ReadConfig()
+func main() {
+	flag.Parse()
+	appConfig := config.ReadConfig(*configPath)
+
+	profile := "debug"
+	switch profile {
+	case "release":
+		profile = "release"
+	case "test":
+		profile = "test"
+	}
+	gin.SetMode(profile)
+
 	db, err := config.NewMongoDatabase(appConfig)
 	if err != nil {
 		log.Fatalf("Database Connection Failed: %s", err)
@@ -22,7 +35,7 @@ func main() {
 	endPoint := fmt.Sprintf(":%s", appConfig.Server.Port)
 
 	server := &http.Server{
-		Addr:  endPoint,
+		Addr:    endPoint,
 		Handler: router,
 	}
 	log.Printf("[info] start http server listening %s", endPoint)
